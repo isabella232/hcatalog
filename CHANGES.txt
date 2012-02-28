@@ -18,13 +18,19 @@
 
 Apache HCatalog Change Log
 
+<<<<<<< HEAD
 Release 0.4.1 - Unreleased
+=======
+Trunk (unreleased changes)
+>>>>>>> Changes to trunk to roll version to 0.5.0
 
   INCOMPATIBLE CHANGES
 
   NEW FEATURES
 
   IMPROVEMENTS
+
+  OPTIMIZATIONS
 
   BUG FIXES
 
