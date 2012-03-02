@@ -18,11 +18,7 @@
 
 Apache HCatalog Change Log
 
-<<<<<<< HEAD
-Release 0.4.1 - Unreleased
-=======
 Trunk (unreleased changes)
->>>>>>> Changes to trunk to roll version to 0.5.0
 
   INCOMPATIBLE CHANGES
 
@@ -114,65 +110,7 @@ Release 0.4.0 - Unreleased
   OPTIMIZATIONS
 
   BUG FIXES
-  HCAT-396 src-release leaves out lib directory (gates)
-
-  HCAT-393 Several hcat 0.4 document fixes (daijy via gates)
-
-  HCAT-395 Hcat 0.4 last minute doc fixes (gates)
-
-  HCAT-394 HCatalog 0.4 should pull hive-0.9.0 from maven instead of 0.9.0-SNAPSHOT (gates)
-
-  HCAT-386 e2e tests should respect JAVA_HOME when it's set (gates)
-
-  HCAT-378 Found a few source files missing Apache headers (gates)
-
-  HCAT-377 Recent changes broke releaseaudit target (gates)
-
-  HCAT-367 Pig writes data but partition information isn't getting updated (rohini via gates)
-
-  HCAT-365 HCatUtil.getStorageHandler should set the configuration (traviscrawford via gates)
-
-  HCAT-371 A few javadoc warnings have crept into HCat (gates)
-
-  HCAT-320 Remove filtering of table properties which are not prefix with "hcat." (rohini via gates)
-
-  HCAT-354 hive-hbase-handler jar not getting put in hcat package (gates)
-
-  HCAT-348 HCatUtil::getHiveConf(Configuration) ignores passed-in conf while creating HiveConf (gates)
-
-  HCAT-312 Hcatalog rpms change the ownership of /usr/lib64 to hcat user (gkesavan via gates)
-
-  HCAT-301 Reading from a table created with upper case table name throws error. (rohini via toffer)
-
-  HCAT-319 Cleanup of 0.3 mapred classes (khorgath via gates)
-
-  HCAT-302 unable to write to hbase channel. HBaseHCatStorageHandler class not found (rohini via gates)
-
-  HCAT-338 A couple of typos in the 0.4.0 document (gates)
-
-  HCAT-335 Release notes issues for 0.4 (gates)
-
-  HCAT-291 Pig and MR fail to write to a sequence file (avandana via gates)
-
-  HCAT-305 hcat shell is not properly picking up the hcat jar (gates)
-
-  HCAT-307 NOTICE and LICENSE file need updated to add new jars and move copyright date to 2012 (gates)
-
-  HCAT-300 A number of files lack Apache license headers (gates)
-
-  HCAT-299 Javadoc build issues (gates)
-
-  HCAT-303 Fix build failure due to HBaseSerDe.parseColumnMapping method signature change in hive (rohini via toffer)
-
-  HCAT-282 HCatInputFormat shouldn't expect storageHandler to be serializable (khorgath via gates)
-
-  HCAT-281 HCat use table schema instead of partition schema to read partition data (daijy and khorgath via gates)
-
-  HCAT 286 NPE in HdfsAuthorizationProvider (enis via gates)
-
-  HCAT 290 Changes in HBase maven objects breaks hcat build (thw via gates)
-
-  HCAT 280 part file name prefix with attempxxxx (daijy via gates)
+  HCAT-280 part file name prefix with attempxxxx (daijy via gates)
 
   HCAT-275 JSON SerDe issues (khorgath via gates)
 
