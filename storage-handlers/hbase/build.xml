@@ -109,8 +109,22 @@
         <pathelement location="${test.build.classes}" />
         <pathelement location="${build.classes}" />
         <pathelement location="conf"/>
-        <fileset dir="${ivy.lib.dir}" includes="*.jar"/>
-        <fileset dir="${hcatalog.dir}/build/hcatalog" includes=" *.jar"/>
+        <pathelement location="${hive.conf.dir}"/>
+        <!-- jars Hadoop depends on -->
+        <fileset dir="${hive.root}/build/hadoopcore/hadoop-${hadoop.version}/" >
+            <include name="**/lib/*.jar" />
+            <include name="hadoop-test-*.jar" />
+        </fileset>
+        <path refid="classpath"/>
+        <pathelement location="${handler.jar}"/>
+        <!-- jars Hive depends on -->
+        <fileset dir="${hive.root}/build/ivy/lib/default/">
+            <include name="**/*.jar" />
+            <exclude name="*hbase*.jar" />
+            <exclude name="zookeeper*.jar" />
+            <exclude name="guava*.jar" />
+            <exclude name="slf4j*.jar" />
+        </fileset>
     </path>
 
     <!--
@@ -327,9 +341,7 @@
     <target name="package-to-handlers" if="dist.handlers.dir">
         <mkdir dir="${dist.handlers.dir}/hbase"/>
         <copy todir="${dist.handlers.dir}/hbase" includeEmptyDirs="true">
-            <fileset dir="${dist.dir}">
-              <include name="**/lib/hbase-storage-handler-*.jar"/>
-            </fileset>
+            <fileset dir="${dist.dir}"/>
         </copy>
     </target>
 </project>
