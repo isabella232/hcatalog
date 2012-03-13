@@ -315,6 +315,88 @@ sub runScript
 }
 
 
+sub getPigCmd($$$)
+{
+    my ($self, $testCmd, $log) = @_;
+
+    my @pigCmd;
+
+    # set the PIG_CLASSPATH environment variable
+	my $pcp .= $testCmd->{'jythonjar'} if (defined($testCmd->{'jythonjar'}));
+    $pcp .= ":" . $testCmd->{'classpath'} if (defined($testCmd->{'classpath'}));
+    $pcp .= ":" . $testCmd->{'additionaljars'} if (defined($testCmd->{'additionaljars'}));
+    # Only add testconfigpath to PIG_CLASSPATH if HADOOP_HOME isn't defined
+    $pcp .= ":" . $testCmd->{'testconfigpath'} if ($testCmd->{'exectype'} ne "local"); #&& (! defined $ENV{'HADOOP_HOME'});
+    $pcp .= ":" . $testCmd->{'hbaseconfigpath'} if ($testCmd->{'exectype'} ne "local" && defined($testCmd->{'hbaseconfigpath'} && $testCmd->{'hbaseconfigpath'} ne ""));
+
+    # Set it in our current environment.  It will get inherited by the IPC::Run
+    # command.
+    $ENV{'PIG_CLASSPATH'} = $pcp;
+
+    @pigCmd = ("$testCmd->{'pigpath'}/bin/pig");
+
+    if (defined($testCmd->{'additionaljars'})) {
+        push(@pigCmd, '-Dpig.additional.jars='.$testCmd->{'additionaljars'});
+    }
+
+    if ($testCmd->{'exectype'} eq "local") {
+		push(@{$testCmd->{'java_params'}}, "-Xmx1024m");
+        push(@pigCmd, ("-x", "local"));
+    }
+
+    my $opts .= "-Dhive.metastore.uris=$testCmd->{'thriftserver'}";
+    if (defined($testCmd->{'java_params'})) {
+        $opts = $opts . " " . join(" ", @{$testCmd->{'java_params'}});
+    }
+
+    $ENV{'PIG_OPTS'} = $ENV{'PIG_OPTS'} . " " . $opts;
+
+	print $log "Returning Pig command " . join(" ", @pigCmd) . "\n";
+	print $log "With PIG_CLASSPATH set to " . $ENV{'PIG_CLASSPATH'} . " and PIG_OPTS set to " . $ENV{'PIG_OPTS'} . "\n";
+    return @pigCmd;
+}
+
+sub dumpPigTable
+{
+    my ($self, $testCmd, $table, $log, $id) = @_;
+    my $subName  = (caller(0))[3];
+
+    my %result;
+
+    # Write the pig script to a file.
+    my $pigfile = $testCmd->{'localpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'} . $id . ".dump.pig";
+    my $outfile = $testCmd->{'outpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'}  . $id . "dump.out";
+
+    open(FH, "> $pigfile") or die "Unable to open file $pigfile to write pig script, $ERRNO\n";
+    print FH "a = load '$table' using org.apache.hcatalog.pig.HCatLoader(); store a into '$outfile';\n";
+    close(FH);
+
+
+    # Build the command
+    my @baseCmd = $self->getPigCmd($testCmd, $log);
+    my @cmd = @baseCmd;
+
+    push(@cmd, $pigfile);
+
+
+    # Run the command
+    print $log "Setting PIG_CLASSPATH to $ENV{'PIG_CLASSPATH'}\n";
+    print $log "$0::$className::$subName INFO: Going to run pig command: @cmd\n";
+
+    IPC::Run::run(\@cmd, \undef, $log, $log) or
+        die "Failed running $pigfile\n";
+    $result{'rc'} = $? >> 8;
+
+
+    # Get results from the command locally
+    my $localoutfile;
+    my $localdir = $testCmd->{'localpath'} . $testCmd->{'group'} . "_" . $testCmd->{'num'} . $id . ".dump.out";
+    my $stores = $self->countStores($testCmd);
+       
+    $outfile = $self->postProcessSingleOutputFile($outfile, $localdir, \@baseCmd, $testCmd, $log);
+    return $outfile;
+}
+
 sub runPig
 {
     my ($self, $testCmd, $log, $copyResults, $noFailOnFail) = @_;
