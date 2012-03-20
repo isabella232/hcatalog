@@ -82,7 +82,6 @@ public class HBaseHCatStorageHandler extends HCatStorageHandler implements HiveM
     private final static String PROPERTY_INT_OUTPUT_LOCATION = "hcat.hbase.mapreduce.intermediateOutputLocation";
 
     private Configuration hbaseConf;
-    private Configuration jobConf;
     private HBaseAdmin admin;
 
     @Override
@@ -97,15 +96,14 @@ public class HBaseHCatStorageHandler extends HCatStorageHandler implements HiveM
             String qualifiedTableName = HBaseHCatStorageHandler.getFullyQualifiedHBaseTableName(tableInfo);
             jobProperties.put(TableInputFormat.INPUT_TABLE, qualifiedTableName);
 
-            Configuration jobConf = getJobConf();
+            Configuration jobConf = getConf();
             addHbaseResources(jobConf, jobProperties);
-            JobConf copyOfConf = new JobConf(jobConf);
+            Configuration copyOfConf = new Configuration(jobConf);
             HBaseConfiguration.addHbaseResources(copyOfConf);
             //Getting hbase delegation token in getInputSplits does not work with PIG. So need to
             //do it here
-            if (jobConf instanceof JobConf) { //Should be the case
-                HBaseUtil.addHBaseDelegationToken(copyOfConf);
-                ((JobConf)jobConf).getCredentials().addAll(copyOfConf.getCredentials());
+            if (jobConf instanceof JobConf) {
+                HBaseUtil.addHBaseDelegationToken((JobConf)jobConf);
             }
 
             String outputSchema = jobConf.get(HCatConstants.HCAT_KEY_OUTPUT_SCHEMA);
@@ -145,7 +143,7 @@ public class HBaseHCatStorageHandler extends HCatStorageHandler implements HiveM
             jobProperties.put(HBaseConstants.PROPERTY_OUTPUT_TABLE_NAME_KEY, qualifiedTableName);
             jobProperties.put(TableOutputFormat.OUTPUT_TABLE, qualifiedTableName);
 
-            Configuration jobConf = getJobConf();
+            Configuration jobConf = getConf();
             addHbaseResources(jobConf, jobProperties);
 
             Configuration copyOfConf = new Configuration(jobConf);
@@ -153,14 +151,24 @@ public class HBaseHCatStorageHandler extends HCatStorageHandler implements HiveM
 
             String txnString = outputJobInfo.getProperties().getProperty(
                     HBaseConstants.PROPERTY_WRITE_TXN_KEY);
+            String jobTxnString = jobConf.get(HBaseConstants.PROPERTY_WRITE_TXN_KEY);
+            //Pig makes 3 calls to HCatOutputFormat.setOutput(HCatStorer) with different JobConf
+            //which leads to creating 2 transactions.
+            //So apart from fixing HCatStorer to pass same OutputJobInfo, making the call idempotent for other
+            //cases which might call multiple times but with same JobConf.
             Transaction txn = null;
-            if (txnString == null) {
+            if (txnString == null && jobTxnString == null) {
                 txn = HBaseRevisionManagerUtil.beginWriteTransaction(qualifiedTableName, tableInfo, copyOfConf);
                 String serializedTxn = HCatUtil.serialize(txn);
                 outputJobInfo.getProperties().setProperty(HBaseConstants.PROPERTY_WRITE_TXN_KEY,
                         serializedTxn);
+                jobProperties.put(HBaseConstants.PROPERTY_WRITE_TXN_KEY, serializedTxn);
             } else {
+                txnString = (txnString == null) ? jobTxnString : txnString;
                 txn = (Transaction) HCatUtil.deserialize(txnString);
+                outputJobInfo.getProperties().setProperty(HBaseConstants.PROPERTY_WRITE_TXN_KEY,
+                        txnString);
+                jobProperties.put(HBaseConstants.PROPERTY_WRITE_TXN_KEY, txnString);
             }
             if (isBulkMode(outputJobInfo)) {
                 String tableLocation = tableInfo.getTableLocation();
@@ -466,18 +474,10 @@ public class HBaseHCatStorageHandler extends HCatStorageHandler implements HiveM
 
     @Override
     public void setConf(Configuration conf) {
-        //setConf is called both during DDL operations and  mapred read/write jobs.
-        //Creating a copy of conf for DDL and adding hbase-default and hbase-site.xml to it.
-        //For jobs, maintaining a reference instead of cloning as we need to
-        //  1) add hbase delegation token to the Credentials.
-        //  2) set tmpjars on it. Putting in jobProperties does not get propagated to JobConf
-        //     in case of InputFormat as they are maintained per partition.
-        //Not adding hbase-default.xml and hbase-site.xml to jobConf as it will override any
-        //hbase properties set in the JobConf by the user. In configureInputJobProperties and
-        //configureOutputJobProperties, we take care of adding the default properties
-        //that are not already present. TODO: Change to a copy for jobs after HCAT-308 is fixed.
-        jobConf = conf;
-        hbaseConf = HBaseConfiguration.create(conf);
+        //Not cloning as we want to set tmpjars on it. Putting in jobProperties does not
+        //get propagated to JobConf in case of InputFormat as they are maintained per partition.
+        //Also we need to add hbase delegation token to the Credentials.
+        hbaseConf = conf;
     }
 
     private void checkDeleteTable(Table table) throws MetaException {

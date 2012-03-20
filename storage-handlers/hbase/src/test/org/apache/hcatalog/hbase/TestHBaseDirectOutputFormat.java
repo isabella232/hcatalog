@@ -382,8 +382,12 @@ public class TestHBaseDirectOutputFormat extends SkeletonHBaseTest {
         job.setOutputFormatClass(HCatOutputFormat.class);
         HCatOutputFormat.setOutput(job, outputJobInfo);
         String txnString = job.getConfiguration().get(HBaseConstants.PROPERTY_WRITE_TXN_KEY);
-        //Test passing in same OutputJobInfo multiple times and verify 1 transaction is created
+        //Test passing in same jobConf or same OutputJobInfo multiple times and verify 1 transaction is created
+        //Same jobConf
+        HCatOutputFormat.setOutput(job, outputJobInfo);
+        assertEquals(txnString, job.getConfiguration().get(HBaseConstants.PROPERTY_WRITE_TXN_KEY));
         String jobString = job.getConfiguration().get(HCatConstants.HCAT_KEY_OUTPUT_INFO);
+        //Same OutputJobInfo
         outputJobInfo = (OutputJobInfo) HCatUtil.deserialize(jobString);
         Job job2 = new Job(conf);
         HCatOutputFormat.setOutput(job2, outputJobInfo);
