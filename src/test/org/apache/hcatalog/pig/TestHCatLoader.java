@@ -35,7 +35,6 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.CommandNeedRetryException;
 import org.apache.hadoop.hive.ql.Driver;
 import org.apache.hadoop.hive.ql.session.SessionState;
-import org.apache.hadoop.mapreduce.Job;
 import org.apache.hcatalog.HcatTestUtils;
 import org.apache.hcatalog.data.Pair;
 import org.apache.pig.ExecType;
@@ -56,10 +55,9 @@ public class TestHCatLoader extends TestCase {
   private static final String BASIC_TABLE = "junit_unparted_basic";
   private static final String COMPLEX_TABLE = "junit_unparted_complex";
   private static final String PARTITIONED_TABLE = "junit_parted_basic";
-  private static final String SPECIFIC_SIZE_TABLE = "junit_specific_size";
   private static Driver driver;
 
-  private static int guardTestCount = 6; // ugh, instantiate using introspection in guardedSetupBeforeClass
+  private static int guardTestCount = 5; // ugh, instantiate using introspection in guardedSetupBeforeClass
   private static boolean setupHasRun = false;
 
   private static Map<Integer,Pair<Integer,String>> basicInputData;
