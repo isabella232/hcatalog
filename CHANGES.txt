@@ -101,6 +101,22 @@ Release 0.4.0 - Unreleased
   OPTIMIZATIONS
 
   BUG FIXES
+  HCAT-338 A couple of typos in the 0.4.0 document (gates)
+
+  HCAT-319 Cleanup of 0.3 mapred classes (khorgath via gates)
+
+  HCAT-291 Pig and MR fail to write to a sequence file (avandana via gates)
+
+  HCAT-305 hcat shell is not properly picking up the hcat jar (gates)
+
+  HCAT-307 NOTICE and LICENSE file need updated to add new jars and move copyright date to 2012 (gates)
+
+  HCAT-300 A number of files lack Apache license headers (gates)
+
+  HCAT-299 Javadoc build issues (gates)
+
+  HCAT-303 Fix build failure due to HBaseSerDe.parseColumnMapping method signature change in hive (rohini via toffer)
+
   HCAT-282 HCatInputFormat shouldn't expect storageHandler to be serializable (khorgath via gates)
 
   HCAT-281 HCat use table schema instead of partition schema to read partition data (daijy and khorgath via gates)
