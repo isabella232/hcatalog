@@ -121,14 +121,6 @@ public class TestRevisionManagerEndpoint extends SkeletonHBaseTest {
     }
 
     @Override
-    public void createTable(String table, List<String> columnFamilies) throws IOException {
-    }
-
-    @Override
-    public void dropTable(String table) throws IOException {
-    }
-
-    @Override
     public Transaction beginWriteTransaction(String table,
         List<String> families) throws IOException {
       return recordCall(null, table, families);
