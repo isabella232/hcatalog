@@ -35,6 +35,7 @@ import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.CommandNeedRetryException;
 import org.apache.hadoop.hive.ql.Driver;
 import org.apache.hadoop.hive.ql.session.SessionState;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hcatalog.HcatTestUtils;
 import org.apache.hcatalog.data.Pair;
 import org.apache.pig.ExecType;
@@ -55,9 +56,10 @@ public class TestHCatLoader extends TestCase {
   private static final String BASIC_TABLE = "junit_unparted_basic";
   private static final String COMPLEX_TABLE = "junit_unparted_complex";
   private static final String PARTITIONED_TABLE = "junit_parted_basic";
+  private static final String SPECIFIC_SIZE_TABLE = "junit_specific_size";
   private static Driver driver;
 
-  private static int guardTestCount = 5; // ugh, instantiate using introspection in guardedSetupBeforeClass
+  private static int guardTestCount = 6; // ugh, instantiate using introspection in guardedSetupBeforeClass
   private static boolean setupHasRun = false;
 
   private static Map<Integer,Pair<Integer,String>> basicInputData;
@@ -381,4 +383,17 @@ public class TestHCatLoader extends TestCase {
     assertEquals(basicInputData.size(),numTuplesRead);
   }
 
+  public void testGetInputBytes() throws Exception {
+    File file = new File(TEST_WAREHOUSE_DIR + "/" + SPECIFIC_SIZE_TABLE + "/part-m-00000");
+    file.deleteOnExit();
+    RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+    randomAccessFile.setLength(2L * 1024 * 1024 * 1024);
+
+    Job job = new Job();
+    HCatLoader hCatLoader = new HCatLoader();
+    hCatLoader.setUDFContextSignature(this.getName());
+    hCatLoader.setLocation(SPECIFIC_SIZE_TABLE, job);
+    ResourceStatistics statistics = hCatLoader.getStatistics(file.getAbsolutePath(), job);
+    assertEquals(2048, (long) statistics.getmBytes());
+  }
 }
