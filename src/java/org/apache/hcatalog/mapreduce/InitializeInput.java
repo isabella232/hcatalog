@@ -50,8 +50,6 @@ public class InitializeInput {
   
   private static final Log LOG = LogFactory.getLog(InitializeInput.class);
 
-  /** The prefix for keys used for storage handler arguments */
-  static final String HCAT_KEY_PREFIX = "hcat.";
   private static HiveConf hiveConf;
 
   private static HiveMetaStoreClient createHiveMetaClient(Configuration conf) throws Exception {
