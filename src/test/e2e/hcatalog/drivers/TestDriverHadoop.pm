@@ -282,16 +282,12 @@ sub runHadoop
     my $cp = $testCmd->{'hcatalog.jar'}; 
     $cp =~ s/,/:/g;
     # Add in the hcat config file
-    $cp .= ":" . $testCmd->{'hive.conf.dir'};
+    $cp .= ":" . $testCmd->{'hiveconf'};
+    $cp .= ":" . $additionalJars;
     $ENV{'HADOOP_CLASSPATH'} = $cp;
 
-    if (defined($testCmd->{'hbaseconfigpath'})) {
-        $ENV{'HADOOP_CLASSPATH'} = "$ENV{'HADOOP_CLASSPATH'}:$testCmd->{'hbaseconfigpath'}";
-    }
-
-    if (defined($testCmd->{'metastore.principal'}) && ($testCmd->{'metastore.principal'} =~ m/\S+/)) {
-        $ENV{'HADOOP_OPTS'} = "$ENV{'HADOOP_OPTS'} -Dhive.metastore.kerberos.principal=" . $testCmd->{'metastore.principal'};
-        $ENV{'HADOOP_CLIENT_OPTS'} = "-Dhive.metastore.kerberos.principal=" . $testCmd->{'metastore.principal'};
+    if (defined($testCmd->{'hbaseconf'})) {
+        $ENV{'HADOOP_CLASSPATH'} = "$ENV{'HADOOP_CLASSPATH'}:$testCmd->{'hbaseconf'}";
     }
 
     # Add su user if provided
@@ -558,47 +554,6 @@ sub runPig
     }
 
     return \%result;
-}
-
-sub getPigCmd($$$)
-{
-    my ($self, $testCmd, $log) = @_;
-
-    my @pigCmd;
-
-    # set the PIG_CLASSPATH environment variable
-	my $pcp .= $testCmd->{'jythonjar'} if (defined($testCmd->{'jythonjar'}));
-    $pcp .= ":" . $testCmd->{'classpath'} if (defined($testCmd->{'classpath'}));
-    $pcp .= ":" . $testCmd->{'additionaljars'} if (defined($testCmd->{'additionaljars'}));
-    # Only add testconfigpath to PIG_CLASSPATH if HADOOP_HOME isn't defined
-    $pcp .= ":" . $testCmd->{'testconfigpath'} if ($testCmd->{'exectype'} ne "local"); #&& (! defined $ENV{'HADOOP_HOME'});
-    $pcp .= ":" . $testCmd->{'hbaseconfigpath'} if ($testCmd->{'exectype'} ne "local" && defined($testCmd->{'hbaseconfigpath'} && $testCmd->{'hbaseconfigpath'} ne ""));
-
-    # Set it in our current environment.  It will get inherited by the IPC::Run
-    # command.
-    $ENV{'PIG_CLASSPATH'} = $pcp;
-
-    @pigCmd = ("$testCmd->{'pigpath'}/bin/pig");
-
-    if (defined($testCmd->{'additionaljars'})) {
-        push(@pigCmd, '-Dpig.additional.jars='.$testCmd->{'additionaljars'});
-    }
-
-    if ($testCmd->{'exectype'} eq "local") {
-		push(@{$testCmd->{'java_params'}}, "-Xmx1024m");
-        push(@pigCmd, ("-x", "local"));
-    }
-
-    my $opts .= "-Dhive.metastore.uris=$testCmd->{'thriftserver'}";
-    if (defined($testCmd->{'java_params'})) {
-        $opts = $opts . " " . join(" ", @{$testCmd->{'java_params'}});
-    }
-
-    $ENV{'PIG_OPTS'} = $opts;
-
-	print $log "Returning Pig command " . join(" ", @pigCmd) . "\n";
-	print $log "With PIG_CLASSPATH set to " . $ENV{'PIG_CLASSPATH'} . " and PIG_OPTS set to " . $ENV{'PIG_OPTS'} . "\n";
-    return @pigCmd;
 }
 
 sub compareSingleOutput

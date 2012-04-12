@@ -111,31 +111,11 @@ sub runHiveCmdFromFile($$;$$$$)
     $outfile = $log if (!defined($outfile));
     $errfile = $log if (!defined($errfile));
 
-    my @cmd = ("$cfg->{'hivehome'}/bin/hive");
-
-    # Add all of the modified properties we want to set
-#   push(@cmd, "--hiveconf", "hive.metastore.uris=$cfg->{'thriftserver'}");
-#   push(@cmd, "--hiveconf", "hive.metastore.local=false");
-
-#   if( defined($cfg->{'metastore.principal'}) && ($cfg->{'metastore.principal'} =~ m/\S+/)
-#       &&  ($cfg->{'metastore.principal'} ne '${metastore.principal}')){
-#       push(@cmd, "--hiveconf", "hive.metastore.sasl.enabled=true",  "--hiveconf", "hive.metastore.kerberos.principal=$cfg->{'metastore.principal'}");
-#   } else {
-#       push(@cmd, "--hiveconf", "hive.metastore.sasl.enabled=false");
-#   }
-
-    $ENV{'HIVE_CONF_DIR'} = "$cfg->{'hive.conf.dir'}";
-
-    if (defined($cfg->{'hive.additionaljars'})) {
-        $ENV{'HIVE_AUX_JARS_PATH'} = $cfg->{'hive.additionaljars'};
-    }
-
-#   if (defined($cfg->{'hiveconf'})) {
-#       foreach my $hc (@{$cfg->{'hiveconf'}}) {
-#           push(@cmd, "--hiveconf", $hc);
-#       }
-#   }
-
+    my @cmd = ($cfg->{'hivebin'});
+  
+    $ENV{'HIVE_CONF_DIR'} = $cfg->{'hiveconf'};
+    $ENV{'HIVE_AUX_JARS_PATH'} = $cfg->{'hcatshare'};
+ 
     if (defined($cfg->{'hivecmdargs'})) {
         push(@cmd, @{$cfg->{'hivecmdargs'}});
     }
@@ -359,5 +339,155 @@ sub getLocaleCmd
           ."export LC_MEASUREMENT=\"$locale\";"
           ."export LC_IDENTIFICATION=\"$locale\"";
 }
+
+sub replaceParameters
+{
+
+    my ($cmd, $outfile, $testCmd, $log) = @_;
+
+    # $self
+# $cmd =~ s/:LATESTOUTPUTPATH:/$self->{'latestoutputpath'}/g;
+
+    # $outfile
+    $cmd =~ s/:OUTPATH:/$outfile/g;
+
+    # $ENV
+    $cmd =~ s/:PIGHARNESS:/$ENV{HARNESS_ROOT}/g;
+
+    # $testCmd
+    $cmd =~ s/:INPATH:/$testCmd->{'inpathbase'}/g;
+    $cmd =~ s/:OUTPATH:/$outfile/g;
+    $cmd =~ s/:FUNCPATH:/$testCmd->{'funcjarPath'}/g;
+    $cmd =~ s/:PIGPATH:/$testCmd->{'pighome'}/g;
+    $cmd =~ s/:RUNID:/$testCmd->{'UID'}/g;
+    $cmd =~ s/:USRHOMEPATH:/$testCmd->{'userhomePath'}/g;
+    $cmd =~ s/:MAPREDJARS:/$testCmd->{'mapredjars'}/g;
+    $cmd =~ s/:SCRIPTHOMEPATH:/$testCmd->{'scriptPath'}/g;
+    $cmd =~ s/:DBUSER:/$testCmd->{'dbuser'}/g;
+    $cmd =~ s/:DBNAME:/$testCmd->{'dbdb'}/g;
+#    $cmd =~ s/:LOCALINPATH:/$testCmd->{'localinpathbase'}/g;
+#    $cmd =~ s/:LOCALOUTPATH:/$testCmd->{'localoutpathbase'}/g;
+#    $cmd =~ s/:LOCALTESTPATH:/$testCmd->{'localpathbase'}/g;
+    $cmd =~ s/:BMPATH:/$testCmd->{'benchmarkPath'}/g;
+    $cmd =~ s/:TMP:/$testCmd->{'tmpPath'}/g;
+    $cmd =~ s/:HDFSTMP:/tmp\/$testCmd->{'runid'}/g;
+    $cmd =~ s/:HCAT_JAR:/$testCmd->{'libjars'}/g;
+
+    if ( $testCmd->{'hadoopSecurity'} eq "secure" ) { 
+      $cmd =~ s/:REMOTECLUSTER:/$testCmd->{'remoteSecureCluster'}/g;
+    } else {
+      $cmd =~ s/:REMOTECLUSTER:/$testCmd->{'remoteNotSecureCluster'}/g;
+    }
+
+    return $cmd;
+}
+
+sub getHiveLibs($$)
+{
+    my ($cfg, $log) = @_;
+
+    my $cp;
+    opendir(LIB, $cfg->{'hivelib'}) or die "Cannot open $cfg->{'hivelib'}, $!\n";
+    my @jars = readdir(LIB);
+    foreach (@jars) {
+        /\.jar$/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+    }
+    closedir(LIB);
+    return $cp;
+}
+
+# Pig needs a limited set of the Hive libs, since they include some of the same jars
+# and we get version mismatches if it picks up all the libraries.
+sub getHiveLibsForPig($$)
+{
+    my ($cfg, $log) = @_;
+
+    my $cp;
+    opendir(LIB, $cfg->{'hivelib'}) or die "Cannot open $cfg->{'hivelib'}, $!\n";
+    my @jars = readdir(LIB);
+    foreach (@jars) {
+        /hive-.*\.jar$/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+        /libfb303.jar/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+        /libthrift.jar/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+        /datanucleus-.*\.jar$/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+        /jdo2-api-.*\.jar$/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+        /commons-dbcp-.*\.jar$/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+        /commons-pool-.*\.jar$/ && do {
+            $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+        };
+#       /hbase-.*\.jar$/ && do {
+#           $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+#       };
+#       /zookeeper-.*\.jar$/ && do {
+#           $cp .= $cfg->{'hivelib'} . '/' . $_ . ':';
+#       };
+    }
+    closedir(LIB);
+    return $cp;
+}
+
+sub getHBaseLibs($$)
+{
+    my ($cfg, $log) = @_;
+
+    my $cp;
+    opendir(LIB, $cfg->{'hbaselibdir'}) or die "Cannot open $cfg->{'hbaselibdir'}, $!\n";
+    my @jars = readdir(LIB);
+    foreach (@jars) {
+        /hbase-.*\.jar$/ && do {
+            $cp .= $cfg->{'hbaselibdir'} . '/' . $_ . ':';
+        };
+    }
+    closedir(LIB);
+    opendir(LIB, $cfg->{'zklibdir'}) or die "Cannot open $cfg->{'zklibdir'}, $!\n";
+    my @jars = readdir(LIB);
+    foreach (@jars) {
+        /zookeeper.*\.jar$/ && do {
+            $cp .= $cfg->{'zklibdir'} . '/' . $_ . ':';
+        };
+    }
+    closedir(LIB);
+    return $cp;
+}
+ 
+
+sub getHCatLibs($$)
+{
+    my ($cfg, $log) = @_;
+
+    my $cp;
+    opendir(LIB, $cfg->{'hcatshare'}) or die "Cannot open $cfg->{'hcatshare'}, $!\n";
+    my @jars = readdir(LIB);
+    foreach (@jars) {
+        /hcatalog-[0-9].*\.jar$/ && do {
+            $cp .= $cfg->{'hcatshare'} . '/' . $_ . ':';
+        };
+    }
+    closedir(LIB);
+    opendir(LIB, $cfg->{'hcatlib'}) or die "Cannot open $cfg->{'hcatlib'}, $!\n";
+    my @jars = readdir(LIB);
+    foreach (@jars) {
+        /hbase-storage-handler.*\.jar$/ && do {
+            $cp .= $cfg->{'hcatlib'} . '/' . $_ . ':';
+        };
+    }
+    closedir(LIB);
+    return $cp;
+}
+        
 
 1;

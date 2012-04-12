@@ -109,22 +109,8 @@
         <pathelement location="${test.build.classes}" />
         <pathelement location="${build.classes}" />
         <pathelement location="conf"/>
-        <pathelement location="${hive.conf.dir}"/>
-        <!-- jars Hadoop depends on -->
-        <fileset dir="${hive.root}/build/hadoopcore/hadoop-${hadoop.version}/" >
-            <include name="**/lib/*.jar" />
-            <include name="hadoop-test-*.jar" />
-        </fileset>
-        <path refid="classpath"/>
-        <pathelement location="${handler.jar}"/>
-        <!-- jars Hive depends on -->
-        <fileset dir="${hive.root}/build/ivy/lib/default/">
-            <include name="**/*.jar" />
-            <exclude name="*hbase*.jar" />
-            <exclude name="zookeeper*.jar" />
-            <exclude name="guava*.jar" />
-            <exclude name="slf4j*.jar" />
-        </fileset>
+        <fileset dir="${ivy.lib.dir}" includes="*.jar"/>
+        <fileset dir="${hcatalog.dir}/build/hcatalog" includes=" *.jar"/>
     </path>
 
     <!--
