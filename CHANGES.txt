@@ -108,6 +108,16 @@ Release 0.4.0 - Unreleased
   OPTIMIZATIONS
 
   BUG FIXES
+  HCAT-314 HCatOutputFormat.setOutput is called more than once by HCatStorer (avandana via toffer)
+
+  HCAT-378 Found a few source files missing Apache headers (gates)
+
+  HCAT-377 Recent changes broke releaseaudit target (gates)
+
+  HCAT-367 Pig writes data but partition information isn't getting updated (rohini via gates)
+
+  HCAT-365 HCatUtil.getStorageHandler should set the configuration (traviscrawford via gates)
+
   HCAT-371 A few javadoc warnings have crept into HCat (gates)
 
   HCAT-320 Remove filtering of table properties which are not prefix with "hcat." (rohini via gates)
