@@ -244,15 +244,6 @@
         </tr>
     </table>
 
-    <p>A more potent script exists in the form of src/packages/hcat-configure.sh
-      which can configure the hive-site.xml to conform to the changes mentioned
-      above. It has predefined values for the most of the above mentioned fields
-      except for the ConnectionPassword and keytabs. It is capable of taking 
-      those fields too as parameters in the command line. Just run it once 
-      without parameters to see a full description of the usage of the script.
-      Users looking to automate the hcat installation should look to leverage
-      this script.
-    </p>
     <p>You can now procede to starting the server.</p>
   </section>
 
@@ -281,7 +272,7 @@
     <title>Stopping the Server</title>
 
     <p>To stop the HCatalog server, change directories to the <em>root</em>
-    directory and invoking <code>sbin/hcat_server.sh stop</code></p>
+    directory and invoking <code>HIVE_HOME=</code><em>hive_home</em><code> sbin/hcat_server.sh stop</code></p>
 
   </section>
 
