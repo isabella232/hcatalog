@@ -520,10 +520,6 @@
       </fileset>
     </copy>
 
-    <copy todir="${dist.dir}/share/${ant.project.name}/lib" includeEmptyDirs="false">
-      <fileset dir="${lib.dir}"/>
-   </copy>
-
     <copy todir="${dist.dir}/bin">
       <fileset dir="bin/">
         <include name="hcat"/>
