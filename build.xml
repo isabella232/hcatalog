@@ -78,7 +78,7 @@
           <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
         </ant>
         <ant target="jar" dir="storage-handlers/hbase" inheritAll="false">
-          <property name="_mvn.hadoop.profile" value="hadoop20"/>
+          <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
         </ant>
     </target>
 

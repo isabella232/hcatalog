@@ -60,12 +60,9 @@ public class TestPigHCatUtil {
     @Test
     public void testGetBagSubSchemaConfigured() throws Exception {
 
-        // NOTE: pig-0.8 sets client system properties by actually getting the client
-        // system properties. Starting in pig-0.9 you must pass the properties in.
-        // When updating our pig dependency this will need updated.
         System.setProperty(HCatConstants.HCAT_PIG_INNER_TUPLE_NAME, "t");
         System.setProperty(HCatConstants.HCAT_PIG_INNER_FIELD_NAME, "FIELDNAME_tuple");
-        UDFContext.getUDFContext().setClientSystemProps();
+        UDFContext.getUDFContext().setClientSystemProps(System.getProperties());
 
         // Define the expected schema.
         ResourceFieldSchema[] bagSubFieldSchemas = new ResourceFieldSchema[1];
