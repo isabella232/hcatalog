@@ -28,7 +28,8 @@
 
   <target name="jar">
     <echo message="${ant.project.name}"/>
-    <_javac srcDir="${basedir}/src/${hadoopversion}/java"
+    <!-- In CDH, we always compile against Hadoop23 Shim -->
+    <_javac srcDir="${basedir}/src/23/java"
             destDir="${path.to.basedir}/core/build/classes"
             classPathRef="compile.class.path"/>
   </target>

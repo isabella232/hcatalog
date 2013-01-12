@@ -67,6 +67,7 @@
   </build>
 
   <profiles>
+    <!-- Profile matters only for unit test. We always compile against MR2. -->
     <profile>
       <id>hadoop20</id>
       <dependencies>
@@ -74,10 +75,8 @@
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-core</artifactId>
           <version>${hadoop20.version}</version>
-          <scope>compile</scope>
+          <scope>test</scope>
         </dependency>
-
-        <!-- test scope -->
         <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-test</artifactId>
@@ -89,6 +88,80 @@
     <profile>
       <id>hadoop23</id>
       <dependencies>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>test</scope>
+          <type>test-jar</type>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-server-tests</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>test</scope>
+          <type>test-jar</type>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
+  <modules>
+    <module>core</module>
+    <module>hcatalog-pig-adapter</module>
+    <module>server-extensions</module>
+    <module>webhcat/java-client</module>
+    <module>webhcat/svr</module>
+    <module>storage-handlers/hbase</module>
+  </modules>
+
+  <repositories>
+    <!-- This is necessary for hive-metastore dependencies. -->
+    <repository>
+      <id>datanucleus</id>
+      <name>datanucleus maven repository</name>
+      <url>http://www.datanucleus.org/downloads/maven2</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+    </repository>
+
+    <!-- A transitive dependency defines this repo in its pom, however, the repo
+       has moved and causes dependency resolutions for 'asm:asm:pom:3.1'. Here we
+       disable the repo as we prefer to use central anyway. -->
+    <repository>
+      <id>glassfish-repository</id>
+      <url>http://maven.glassfish.org/content/groups/glassfish</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+
+    <!-- CDH repositories -->
+    <repository>
+      <id>cdh.releases.repo</id>
+      <url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url>
+      <name>CDH Releases Repository</name>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>cdh.snapshots.repo</id>
+      <url>https://repository.cloudera.com/content/repositories/snapshots</url>
+      <name>CDH Snapshots Repository</name>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+    <dependencies>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-annotations</artifactId>
@@ -219,80 +292,6 @@
           <scope>test</scope>
           <type>test-jar</type>
         </dependency>
-        <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
-          <version>${hadoop23.version}</version>
-          <scope>test</scope>
-          <type>test-jar</type>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-yarn-server-tests</artifactId>
-          <version>${hadoop23.version}</version>
-          <scope>test</scope>
-          <type>test-jar</type>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
-
-  <modules>
-    <module>core</module>
-    <module>hcatalog-pig-adapter</module>
-    <module>server-extensions</module>
-    <module>webhcat/java-client</module>
-    <module>webhcat/svr</module>
-    <module>storage-handlers/hbase</module>
-  </modules>
-
-  <repositories>
-    <!-- This is necessary for hive-metastore dependencies. -->
-    <repository>
-      <id>datanucleus</id>
-      <name>datanucleus maven repository</name>
-      <url>http://www.datanucleus.org/downloads/maven2</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <checksumPolicy>warn</checksumPolicy>
-      </releases>
-    </repository>
-
-    <!-- A transitive dependency defines this repo in its pom, however, the repo
-       has moved and causes dependency resolutions for 'asm:asm:pom:3.1'. Here we
-       disable the repo as we prefer to use central anyway. -->
-    <repository>
-      <id>glassfish-repository</id>
-      <url>http://maven.glassfish.org/content/groups/glassfish</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-
-    <!-- CDH repositories -->
-    <repository>
-      <id>cdh.releases.repo</id>
-      <url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url>
-      <name>CDH Releases Repository</name>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>cdh.snapshots.repo</id>
-      <url>https://repository.cloudera.com/content/repositories/snapshots</url>
-      <name>CDH Snapshots Repository</name>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-    <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

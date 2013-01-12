@@ -20,7 +20,15 @@
 -->
 
 <project name="hcatalog" default="jar"
-         xmlns:artifact="artifact:org.apache.maven.artifact.ant">
+         xmlns:artifact="artifact:org.apache.maven.artifact.ant"
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <!-- load ant-contrib tasks to get the "if" task -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${basedir}/cloudera/maven-packaging/lib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
 
     <property name="path.to.basedir" location="${basedir}"/>
 
@@ -282,6 +290,9 @@
         <mkdir dir="${dist.dir}/share/doc/${ant.project.name}/api"/>
         <mkdir dir="${dist.dir}/share/doc/${ant.project.name}/jdiff"/>
         <mkdir dir="${dist.dir}/share/doc/${ant.project.name}/license"/>
+        <copy todir="${dist.dir}/cloudera">
+            <fileset dir="cloudera" />
+        </copy>
 
         <copy todir="${dist.dir}/share/${ant.project.name}" includeEmptyDirs="false">
             <fileset dir="core/build">
@@ -416,6 +427,7 @@
                 <include name="*.txt"/>
                 <include name="*.xml"/>
                 <include name="KEYS"/>
+                <include name="cloudera/**"/>
             </tarfileset>
             <tarfileset dir="${basedir}" mode="755" prefix="${ant.project.name}-src-${hcatalog.version}">
                 <include name="bin/**"/>
