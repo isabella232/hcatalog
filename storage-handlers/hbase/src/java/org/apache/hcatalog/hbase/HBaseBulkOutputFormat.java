@@ -43,6 +43,7 @@ import org.apache.hadoop.mapred.SequenceFileOutputFormat;
 import org.apache.hadoop.mapred.TaskAttemptContext;
 import org.apache.hadoop.util.Progressable;
 import org.apache.hcatalog.hbase.snapshot.RevisionManager;
+import org.apache.hcatalog.shims.HCatHadoopShims;
 
 /**
  * Class which imports data into HBase via it's "bulk load" feature. Wherein
@@ -150,7 +151,7 @@ class HBaseBulkOutputFormat extends HBaseBaseOutputFormat {
         @Override
         public boolean needsTaskCommit(TaskAttemptContext taskContext)
             throws IOException {
-            return baseOutputCommitter.needsTaskCommit(taskContext);
+            return HCatHadoopShims.Instance.get().needsTaskCommit(baseOutputCommitter, taskContext);
         }
 
         @Override
