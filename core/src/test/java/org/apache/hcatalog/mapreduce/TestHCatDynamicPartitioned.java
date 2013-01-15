@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 public class TestHCatDynamicPartitioned extends HCatMapReduceTest {
@@ -138,23 +139,31 @@ public class TestHCatDynamicPartitioned extends HCatMapReduceTest {
 
         //Test for duplicate publish
         IOException exc = null;
+        Job job = null;
         try {
             generateWriteRecords(NUM_RECORDS, NUM_PARTITIONS, 0);
-            Job job = runMRCreate(null, dataColumns, writeRecords, NUM_RECORDS, false);
-            if (HcatTestUtils.isHadoop23()) {
+            job = runMRCreate(null, dataColumns, writeRecords, NUM_RECORDS, false);
+            if (HcatTestUtils.isHadoop23() || HcatTestUtils.isHadoop2_0() ) {
                 new FileOutputCommitterContainer(job, null).cleanupJob(job);
             }
         } catch (IOException e) {
             exc = e;
         }
 
-        assertTrue(exc != null);
-        assertTrue(exc instanceof HCatException);
-        assertTrue("Got exception of type [" + ((HCatException) exc).getErrorType().toString()
-                + "] Expected ERROR_PUBLISHING_PARTITION or ERROR_MOVE_FAILED",
-                (ErrorType.ERROR_PUBLISHING_PARTITION == ((HCatException) exc).getErrorType())
-                        || (ErrorType.ERROR_MOVE_FAILED == ((HCatException) exc).getErrorType())
-        );
+        if (HcatTestUtils.isHadoop23() || HcatTestUtils.isHadoop2_0()) {
+            // In MR2, LocalJobRunner does not propagate the exception thrown by
+            // commitJob(). Instead, it logs an WARN message, sets the job state
+            // to FAILED, and keeps going.
+            assertFalse(job.isSuccessful());
+        } else {
+            assertTrue(exc != null);
+            assertTrue(exc instanceof HCatException);
+            assertTrue("Got exception of type [" + ((HCatException) exc).getErrorType().toString()
+                    + "] Expected ERROR_PUBLISHING_PARTITION or ERROR_MOVE_FAILED",
+                    (ErrorType.ERROR_PUBLISHING_PARTITION == ((HCatException) exc).getErrorType())
+                            || (ErrorType.ERROR_MOVE_FAILED == ((HCatException) exc).getErrorType())
+            );
+        }
     }
 
     //TODO 1.0 miniCluster is slow this test times out, make it work

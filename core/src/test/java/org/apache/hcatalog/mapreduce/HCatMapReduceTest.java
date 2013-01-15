@@ -281,7 +281,7 @@ public abstract class HCatMapReduceTest extends HCatBaseTest {
                     .findCounter("FILE_BYTES_READ").getValue() > 0);
         }
 
-        if (!HcatTestUtils.isHadoop23()) {
+        if (!HcatTestUtils.isHadoop23() && !HcatTestUtils.isHadoop2_0()) {
             // Local mode outputcommitter hook is not invoked in Hadoop 1.x
             if (success) {
                 new FileOutputCommitterContainer(job, null).commitJob(job);
