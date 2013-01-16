@@ -108,7 +108,7 @@
         <path id="checkstyle.class.path">
           <fileset dir="core/build/lib/test"/>
         </path>
-        <antcall target="checkstyle" inheritRefs="true"/>
+        <!--antcall target="checkstyle" inheritRefs="true"/-->
     </target>
 
     <target name="test-with-clover" depends="clover-init"
