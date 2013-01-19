@@ -53,7 +53,9 @@
         </classpath>
         <formatter type="${test.junit.output.format}"/>
         <batchtest fork="yes" todir="${test.logs}" unless="testcase">
-          <fileset dir="@{srcDir}" includes="**/Test*.java"/>
+          <fileset dir="@{srcDir}" includes="**/Test*.java">
+            <excludesfile name="${test.exclude.file}" if="test.exclude.file"/>
+          </fileset>
         </batchtest>
         <batchtest fork="yes" todir="${test.logs}" if="testcase">
           <fileset dir="@{srcDir}" includes="**/${testcase}.java"/>
