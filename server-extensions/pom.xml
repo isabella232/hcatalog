@@ -40,13 +40,11 @@
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
-            <version>${jms.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
-            <version>${activemq.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -58,7 +56,6 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>kahadb</artifactId>
-            <version>${activemq.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

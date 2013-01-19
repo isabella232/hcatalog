@@ -22,20 +22,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <properties>
-      <!-- TODO: Move the following versions to cdh-root pom -->
-      <hcatalog.version>0.4.0-cdh4.2.0-SNAPSHOT</hcatalog.version>
-      <activemq.version>5.5.0</activemq.version>
-      <commons-exec.version>1.1</commons-exec.version>
-      <commons-io.version>2.4</commons-io.version>
-      <jersey.version>1.9.1</jersey.version>
-      <jetty.webhcat.version>7.6.0.v20120127</jetty.webhcat.version>
-      <jms.version>1.1</jms.version>
-      <slf4j.version>1.6.1</slf4j.version>
-      <wadl-resourcedoc-doclet.version>1.4</wadl-resourcedoc-doclet.version>
-
       <hadoop20.version>${cdh.mr1.version}</hadoop20.version>
       <hadoop23.version>${cdh.hadoop.version}</hadoop23.version>
       <hbase.version>${cdh.hbase.version}</hbase.version>
+      <hcatalog.version>${cdh.hcatalog.version}</hcatalog.version>
       <hive.version>${cdh.hive.version}</hive.version>
       <pig.version>${cdh.pig.version}</pig.version>
       <zookeeper.version>${cdh.zookeeper.version}</zookeeper.version>

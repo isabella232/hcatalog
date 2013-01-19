@@ -59,25 +59,21 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>${jersey.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>${jersey.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
-            <version>${commons-exec.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -106,19 +102,16 @@
         <dependency>
             <groupId>org.eclipse.jetty.aggregate</groupId>
             <artifactId>jetty-all-server</artifactId>
-            <version>${jetty.webhcat.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>wadl-resourcedoc-doclet</artifactId>
-            <version>${wadl-resourcedoc-doclet.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
