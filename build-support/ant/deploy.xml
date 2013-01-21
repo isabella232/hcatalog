@@ -95,7 +95,6 @@
         <echo message="${ant.project.name}"/>
         <artifact:deploy file="${build.dir}/${ant.project.name}-${hcatalog.version}.jar"
           pomRefId="mvn.pom">
-            <remoteRepository id="${mvn.deploy.repo.id}" url="${mvn.deploy.repo.url}"/>
         </artifact:deploy>
     </target>
 
@@ -108,7 +107,6 @@
           pomRefId="mvn.pom">
             <attach file="${build.dir}/${ant.project.name}-${hcatalog.version}.jar.asc" type="jar.asc"/>
             <attach file="${pom.file}.asc" type="pom.asc"/>
-            <remoteRepository id="${mvn.deploy.repo.id}" url="${mvn.deploy.repo.url}"/>
         </artifact:deploy>
     </target>
 

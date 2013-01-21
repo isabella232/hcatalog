@@ -232,7 +232,6 @@
             description="Deploy artifacts to a Maven repository.">
         <artifact:deploy file="pom.xml">
             <artifact:pom file="pom.xml"/>
-            <remoteRepository id="${mvn.deploy.repo.id}" url="${mvn.deploy.repo.url}"/>
         </artifact:deploy>
         <ant target="mvn-deploy" dir="core" inheritAll="false" useNativeBasedir="true"/>
         <ant target="mvn-deploy" dir="hcatalog-pig-adapter" inheritAll="false" useNativeBasedir="true"/>
@@ -253,7 +252,6 @@
         <artifact:deploy file="pom.xml">
             <artifact:pom file="pom.xml"/>
             <attach file="pom.xml.asc" type="pom.asc"/>
-            <remoteRepository id="${mvn.deploy.repo.id}" url="${mvn.deploy.repo.url}"/>
         </artifact:deploy>
 
         <ant target="mvn-deploy-signed" dir="core" inheritAll="false" useNativeBasedir="true">
