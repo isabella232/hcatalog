@@ -47,6 +47,7 @@
         <sysproperty key="hive.metastore.warehouse.dir" value="${test.warehouse.dir}"/>
         <sysproperty key="java.security.krb5.realm" value=""/> <!-- HADOOP-7489 -->
         <sysproperty key="java.security.krb5.kdc" value=""/> <!-- HADOOP-7489 -->
+        <sysproperty key="log4j.configuration" value="file:${path.to.basedir}/conf/test-log4j.properties"/>
         <classpath>
           <path refid="test.class.path"/>
           <pathelement location="${clover.jar}"/>

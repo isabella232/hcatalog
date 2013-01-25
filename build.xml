@@ -435,6 +435,7 @@
                 <include name="build-support/**"/>
                 <exclude name="build-support/scripts/**"/>
                 <include name="conf/**"/>
+                <exclude name="conf/test-log4j.properties"/>
                 <include name="core/**"/>
                 <include name="hcatalog-pig-adapter/**"/>
                 <include name="server-extensions/**"/>
