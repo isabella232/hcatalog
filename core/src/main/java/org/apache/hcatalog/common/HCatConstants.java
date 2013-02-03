@@ -24,8 +24,6 @@ import org.apache.hadoop.mapred.SequenceFileOutputFormat;
 
 public final class HCatConstants {
 
-    public static final String PREFIX = "hcat.";
-
     public static final String HIVE_RCFILE_IF_CLASS = "org.apache.hadoop.hive.ql.io.RCFileInputFormat";
     public static final String HIVE_RCFILE_OF_CLASS = "org.apache.hadoop.hive.ql.io.RCFileOutputFormat";
 
@@ -55,7 +53,7 @@ public final class HCatConstants {
     public static final String HCAT_PIG_STORER_EXTERNAL_LOCATION = HCAT_PIG_STORER + ".external.location";
 
     //The keys used to store info into the job Configuration
-    public static final String HCAT_KEY_BASE = PREFIX + "mapreduce.lib.hcat";
+    public static final String HCAT_KEY_BASE = "mapreduce.lib.hcat";
 
     public static final String HCAT_KEY_OUTPUT_SCHEMA = HCAT_KEY_BASE + ".output.schema";
 
@@ -98,7 +96,7 @@ public final class HCatConstants {
     //updates the job configuration in the backend to insert these keys to avoid
     //having to call setOutput from the backend (which would cause a metastore call
     //from the map jobs)
-    public static final String HCAT_KEY_OUTPUT_BASE = PREFIX + "mapreduce.lib.hcatoutput";
+    public static final String HCAT_KEY_OUTPUT_BASE = "mapreduce.lib.hcatoutput";
     public static final String HCAT_KEY_OUTPUT_INFO = HCAT_KEY_OUTPUT_BASE + ".info";
     public static final String HCAT_KEY_HIVE_CONF = HCAT_KEY_OUTPUT_BASE + ".hive.conf";
     public static final String HCAT_KEY_TOKEN_SIGNATURE = HCAT_KEY_OUTPUT_BASE + ".token.sig";
