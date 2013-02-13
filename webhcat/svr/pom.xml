@@ -107,6 +107,14 @@
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>wadl-resourcedoc-doclet</artifactId>
+            <!-- We do't want to add this dependency to cdh root POM because
+                 it's only needed to compile Java docs at compile time, not
+                 needed at runtime. In addition, having xercesImpl-*.jar, which
+                 is a transitive depedency of this jar file, in classpath
+                 causes a runtime error when starting webhcat-server
+                 (CDH-10430). 
+            -->
+            <version>1.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
