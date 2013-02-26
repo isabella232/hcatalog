@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.hcatalog</groupId>
         <artifactId>hcatalog</artifactId>
-        <version>0.5.0-SNAPSHOT</version>
+        <version>0.5.0-cdh4.3.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -32,7 +32,7 @@
     <groupId>org.apache.hcatalog</groupId>
     <artifactId>webhcat</artifactId>
     <packaging>jar</packaging>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.5.0-cdh4.3.0-SNAPSHOT</version>
     <name>webhcat</name>
     <url>http://maven.apache.org</url>
 
@@ -59,61 +59,73 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>${jersey.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-servlet</artifactId>
-            <version>${jersey.version}</version>
+            <artifactId>jersey-server</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
-            <version>${commons-exec.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-            <version>${zookeeper.version}</version>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <version>${hadoop20.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop23.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>${hadoop23.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hcatalog</groupId>
+            <artifactId>hcatalog-core</artifactId>
+            <version>${hcatalog.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
-            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>${jackson.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.aggregate</groupId>
             <artifactId>jetty-all-server</artifactId>
-            <version>${jetty.webhcat.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>wadl-resourcedoc-doclet</artifactId>
-            <version>${wadl-resourcedoc-doclet.version}</version>
+            <!-- We don't want to add this dependency to cdh root POM because
+                 it's only needed to compile Java docs at compile time, not
+                 needed at runtime. In addition, having xercesImpl-*.jar, which
+                 is a transitive depedency of this jar file, in classpath
+                 causes a runtime error when starting webhcat-server
+                 (CDH-10430). 
+            -->
+            <version>1.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>${slf4j.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

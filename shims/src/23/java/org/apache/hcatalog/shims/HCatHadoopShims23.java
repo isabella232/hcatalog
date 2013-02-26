@@ -41,6 +41,15 @@ import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.net.NetUtils;
 
 public class HCatHadoopShims23 implements HCatHadoopShims {
+    private static boolean isMR1() {
+        try {
+            Class<?> clasz = Class.forName("org.apache.hadoop.mapred.JobTracker");
+        } catch(ClassNotFoundException cnfe) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public TaskID createTaskID() {
         return new TaskID("", 0, TaskType.MAP, 0);
@@ -86,8 +95,23 @@ public class HCatHadoopShims23 implements HCatHadoopShims {
     @Override
     public org.apache.hadoop.mapred.JobContext createJobContext(org.apache.hadoop.mapred.JobConf conf,
                                                                 org.apache.hadoop.mapreduce.JobID jobId, Progressable progressable) {
-        return new org.apache.hadoop.mapred.JobContextImpl(
-					new JobConf(conf), jobId, (org.apache.hadoop.mapred.Reporter) progressable);
+        if (isMR1()) {
+            org.apache.hadoop.mapred.JobContext newContext = null;
+            // The constructor of JobContextImpl is not public in MR1.
+            try {
+                java.lang.reflect.Constructor construct = org.apache.hadoop.mapred.JobContextImpl.class.getDeclaredConstructor(
+                        org.apache.hadoop.mapred.JobConf.class, org.apache.hadoop.mapreduce.JobID.class,
+                        Progressable.class);
+                construct.setAccessible(true);
+                newContext = (org.apache.hadoop.mapred.JobContextImpl)construct.newInstance(conf, jobId, progressable);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return newContext;
+        } else {
+            return new org.apache.hadoop.mapred.JobContextImpl(
+                    new JobConf(conf), jobId, (org.apache.hadoop.mapred.Reporter) progressable);
+        }
     }
 
     @Override
@@ -102,7 +126,12 @@ public class HCatHadoopShims23 implements HCatHadoopShims {
 
     @Override
     public InetSocketAddress getResourceManagerAddress(Configuration conf) {
-        String addr = conf.get("yarn.resourcemanager.address", "localhost:8032");
+        String addr;
+        if (isMR1()) {
+            addr = conf.get("mapred.job.tracker", "localhost:8012");
+        } else {
+            addr = conf.get("yarn.resourcemanager.address", "localhost:8032");
+        }
 
         return NetUtils.createSocketAddr(addr);
     }

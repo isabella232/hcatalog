@@ -24,7 +24,6 @@ import java.net.InetSocketAddress;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hive.shims.ShimLoader;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.JobContext;
@@ -53,12 +52,8 @@ public interface HCatHadoopShims {
         }
 
         private static HCatHadoopShims selectShim() {
-            // piggyback on Hive's detection logic
-            String major = ShimLoader.getMajorVersion();
-            String shimFQN = "org.apache.hcatalog.shims.HCatHadoopShims20S";
-            if (major.startsWith("0.23")) {
-                shimFQN = "org.apache.hcatalog.shims.HCatHadoopShims23";
-            }
+            // In CDH, we always compile against Hadoop23 shim
+            String shimFQN = "org.apache.hcatalog.shims.HCatHadoopShims23";
             try {
                 Class<? extends HCatHadoopShims> clasz = Class.forName(shimFQN)
                     .asSubclass(HCatHadoopShims.class);

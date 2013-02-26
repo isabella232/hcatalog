@@ -22,35 +22,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <properties>
-      <activemq.version>5.5.0</activemq.version>
-      <commons-exec.version>1.1</commons-exec.version>
-      <commons-io.version>2.4</commons-io.version>
-      <guava.version>11.0.2</guava.version>
-      <hadoop20.version>1.0.3</hadoop20.version>
-      <hadoop23.version>0.23.3</hadoop23.version>
-      <hbase.version>0.92.0</hbase.version>
-      <hcatalog.version>${project.version}</hcatalog.version>
-      <hive.version>0.10.0</hive.version>
-      <jackson.version>1.8.3</jackson.version>
-      <jersey.version>1.14</jersey.version>
-      <jetty.webhcat.version>7.6.0.v20120127</jetty.webhcat.version>
-      <jms.version>1.1</jms.version>
-      <pig.version>0.8.0</pig.version>
-      <slf4j.version>1.6.1</slf4j.version>
-      <wadl-resourcedoc-doclet.version>1.4</wadl-resourcedoc-doclet.version>
-      <zookeeper.version>3.4.3</zookeeper.version>
+      <hadoop20.version>${cdh.mr1.version}</hadoop20.version>
+      <hadoop23.version>${cdh.hadoop.version}</hadoop23.version>
+      <hbase.version>${cdh.hbase.version}</hbase.version>
+      <hcatalog.version>${cdh.hcatalog.version}</hcatalog.version>
+      <hive.version>${cdh.hive.version}</hive.version>
+      <pig.version>${cdh.pig.version}</pig.version>
+      <zookeeper.version>${cdh.zookeeper.version}</zookeeper.version>
   </properties>
 
   <parent>
-    <groupId>org.apache</groupId>
-    <artifactId>apache</artifactId>
-    <version>11</version>
+    <groupId>com.cloudera.cdh</groupId>
+    <artifactId>cdh-root</artifactId>
+    <version>4.3.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.hcatalog</groupId>
   <artifactId>hcatalog</artifactId>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.5.0-cdh4.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <build>
@@ -68,14 +58,15 @@
   </build>
 
   <profiles>
+    <!-- Profile matters only for unit test. We always compile against MR2. -->
     <profile>
       <id>hadoop20</id>
       <dependencies>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-tools</artifactId>
+          <artifactId>hadoop-core</artifactId>
           <version>${hadoop20.version}</version>
-          <scope>compile</scope>
+          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
@@ -90,27 +81,17 @@
       <dependencies>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-archives</artifactId>
+          <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
           <version>${hadoop23.version}</version>
-          <scope>compile</scope>
+          <scope>test</scope>
+          <type>test-jar</type>
         </dependency>
         <dependency>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-common</artifactId>
+          <artifactId>hadoop-yarn-server-tests</artifactId>
           <version>${hadoop23.version}</version>
-          <scope>compile</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-hdfs</artifactId>
-          <version>${hadoop23.version}</version>
-          <scope>compile</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-mapreduce-client-core</artifactId>
-          <version>${hadoop23.version}</version>
-          <scope>compile</scope>
+          <scope>test</scope>
+          <type>test-jar</type>
         </dependency>
       </dependencies>
     </profile>
@@ -151,25 +132,162 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
+
+    <!-- CDH repositories -->
     <repository>
-      <id>glassfish-repo-archive</id>
-      <url>http://maven.glassfish.org/content/groups/glassfish</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
+      <id>cdh.releases.repo</id>
+      <url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url>
+      <name>CDH Releases Repository</name>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
     </repository>
-
+    <repository>
+      <id>cdh.snapshots.repo</id>
+      <url>https://repository.cloudera.com/content/repositories/snapshots</url>
+      <name>CDH Snapshots Repository</name>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-annotations</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-auth</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-archives</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-mapreduce-client-app</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-mapreduce-client-common</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-mapreduce-client-core</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-mapreduce-client-hs</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-mapreduce-client-shuffle</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-client</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-common</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-api</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-server-common</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-server-nodemanager</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-server-resourcemanager</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-server-web-proxy</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-yarn-server-tests</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>compile</scope>
+        </dependency>
+
+        <!-- test scope -->
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>test</scope>
+          <type>test-jar</type>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs</artifactId>
+          <version>${hadoop23.version}</version>
+          <scope>test</scope>
+          <type>test-jar</type>
+        </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.10</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>com.puppycrawl.tools</groupId>

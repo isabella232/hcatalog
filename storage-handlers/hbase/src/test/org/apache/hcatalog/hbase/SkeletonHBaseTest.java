@@ -202,11 +202,7 @@ public abstract class SkeletonHBaseTest {
                     cluster = null;
                 } finally {
                     System.out.println("Trying to cleanup: " + testDir);
-                    try {
-                        FileUtil.fullyDelete(new File(testDir));
-                    } catch (IOException e) {
-                        throw new IllegalStateException("Failed to cleanup test dir", e);
-                    }
+                    FileUtil.fullyDelete(new File(testDir));
                 }
             }
         }
