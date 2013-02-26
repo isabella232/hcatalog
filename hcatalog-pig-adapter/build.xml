@@ -38,16 +38,16 @@
     <equals arg1="${mvn.hadoop.profile}" arg2="hadoop20"/>
     <then>
       <path id="test.class.path">
+        <path refid="test.class.path.common"/>
         <fileset dir="${path.to.basedir}/hcatalog-pig-adapter/build/lib/test"
                  excludes="hadoop-mapreduce-*.jar,hadoop-yarn-*.jar"/>
-        <path refid="test.class.path.common"/>
       </path>
     </then>
     <else>
       <path id="test.class.path">
+        <path refid="test.class.path.common"/>
         <fileset dir="${path.to.basedir}/hcatalog-pig-adapter/build/lib/test"
                  excludes="hadoop-core-*.jar,hadoop-test-*.jar"/>
-        <path refid="test.class.path.common"/>
       </path>
     </else>
   </if>

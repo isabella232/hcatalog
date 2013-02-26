@@ -31,6 +31,8 @@ import org.apache.hadoop.mapreduce.JobID;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskID;
+import org.apache.hadoop.mapred.OutputCommitter;
+import org.apache.hadoop.mapred.TaskAttemptContext;
 import org.apache.hadoop.util.Progressable;
 
 /**
@@ -96,4 +98,12 @@ public interface HCatHadoopShims {
      */
     public boolean isFileInHDFS(FileSystem fs, Path path) throws IOException;
 
+    /**
+     * Return true if the underlying task needs commit.
+     *
+     * @param committer Used committer
+     * @param taskAttemptContext Particular task attempt
+     * @return
+     */
+    public boolean needsTaskCommit(OutputCommitter committer, TaskAttemptContext taskAttemptContext) throws IOException;
 }

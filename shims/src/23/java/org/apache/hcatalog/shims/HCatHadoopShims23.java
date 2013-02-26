@@ -32,10 +32,14 @@ import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.TaskID;
 import org.apache.hadoop.mapreduce.TaskType;
 import org.apache.hadoop.mapreduce.task.JobContextImpl;
+import org.apache.hadoop.mapred.OutputCommitter;
+import org.apache.hadoop.mapred.TaskAttemptContext;
+import org.apache.hadoop.mapred.FileOutputCommitter;
 import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FileSystem;
 
+import java.lang.reflect.Method;
 
 import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.net.NetUtils;
@@ -156,4 +160,41 @@ public class HCatHadoopShims23 implements HCatHadoopShims {
         // resolvePath is a sure shot way of knowing which file system the file is.
         return "hdfs".equals(fs.resolvePath(path).toUri().getScheme());
     }
+
+    @Override
+    public boolean needsTaskCommit(OutputCommitter committer, TaskAttemptContext taskAttemptContext) throws IOException {
+        // For MR1 or non FileOutputCommitter promote committer value
+        if(isMR1() || !(committer instanceof FileOutputCommitter)) {
+          return committer.needsTaskCommit(taskAttemptContext);
+        }
+
+        // At this point we know that we have FileOutputCommitter on MR2.
+        // Let's go to reflection and verify if output path equals to task attempt path
+        try {
+            Method methodGetOutputPath = FileOutputCommitter.class.getDeclaredMethod("getOutputPath", TaskAttemptContext.class);
+            methodGetOutputPath.setAccessible(true);
+            Path outputPath = (Path) methodGetOutputPath.invoke(null, taskAttemptContext);
+
+            Method methodGetTaskAttemptPath = FileOutputCommitter.class.getDeclaredMethod("getTaskAttemptPath", TaskAttemptContext.class);
+            methodGetTaskAttemptPath.setAccessible(true);
+            Path taskAttemptPath = (Path) methodGetTaskAttemptPath.invoke(committer, taskAttemptContext);
+
+            // This should not happen in FileOutputCommitter
+            if(outputPath == null || taskAttemptPath == null) {
+              return false;
+            }
+
+            // We don't need commit if we are directly writing into the
+            // output directory.
+            if(outputPath.equals(taskAttemptPath)) {
+              return false;
+            }
+
+            return true;
+        } catch(Exception ex) {
+            return committer.needsTaskCommit(taskAttemptContext);
+        }
+
+    }
+
 }

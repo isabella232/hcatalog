@@ -84,6 +84,8 @@
     <_javac srcDir="${basedir}/src/test/java"
             destDir="${test.classes}"
             classPathRef="test.class.path"/>
+    <property name="mr-apps-classpath" refid="test.class.path"/>
+    <echo file="${test.classes}/mrapp-generated-classpath" message="${mr-apps-classpath}"/>
   </target>
 
   <target name="test" depends="jar, compile-test">

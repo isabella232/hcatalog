@@ -49,7 +49,7 @@ import java.util.Map;
 public enum HCatContext {
     INSTANCE;
 
-    private Configuration conf = null;
+    private ThreadLocal<Configuration> conf = new ThreadLocal<Configuration>();
 
     /**
      * Use the given configuration for optional behavior. Keys exclusive to an existing config
@@ -59,18 +59,18 @@ public enum HCatContext {
     public synchronized HCatContext setConf(Configuration newConf) {
         Preconditions.checkNotNull(newConf, "Required parameter 'newConf' must not be null.");
 
-        if (conf == null) {
-            conf = newConf;
+        if (conf.get() == null) {
+            conf.set(newConf);
             return this;
         }
 
-        if (conf != newConf) {
-            for (Map.Entry<String, String> entry : conf) {
+        if (conf.get() != newConf) {
+            for (Map.Entry<String, String> entry : conf.get()) {
                 if ((entry.getKey().matches("hcat.*")) && (newConf.get(entry.getKey()) == null)) {
                     newConf.set(entry.getKey(), entry.getValue());
                 }
             }
-            conf = newConf;
+            conf.set(newConf);
         }
         return this;
     }
@@ -82,6 +82,6 @@ public enum HCatContext {
      * @return an Optional that might contain a Configuration
      */
     public Optional<Configuration> getConf() {
-        return Optional.fromNullable(conf);
+        return Optional.fromNullable(conf.get());
     }
 }
