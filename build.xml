@@ -57,8 +57,24 @@
     <property name="package.buildroot" value="${build.dir}/rpm/hcatalog_package_build_${user.name}"/>
     <property name="package.build.dir" value="${build.dir}/rpm/hcatalog_package_build_${user.name}/BUILD"/>
 
-    <target name="init">
+    <target name="init" depends="jvm-check">
         <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <!-- JVM version validation -->
+    <target name="jvm-check">
+        <property name="javaVersion" value="1.6"/>
+
+        <property name="requiredJavaVersion" value="xx${javaVersion}"/>
+        <property name="currentJavaVersion" value="xx${java.version}"/>
+        <condition property="jvm.fail">
+            <not>
+                <contains string="${currentJavaVersion}" substring="${requiredJavaVersion}"/>
+            </not>
+        </condition>
+        <fail if="jvm.fail">
+            Incorrect JVM, current = ${java.version}, required ${javaVersion}.
+        </fail>
     </target>
 
     <!--
@@ -148,7 +164,7 @@
     ================================================================================
     -->
     <!-- Clean up children -->
-    <target name="clean" description="Cleanup all build artifacts">
+    <target name="clean" depends="jvm-check" description="Cleanup all build artifacts">
         <echo message="${ant.project.name}"/>
         <delete dir="${build.dir}"/>
         <ant target="clean" dir="core" inheritAll="false"/>
