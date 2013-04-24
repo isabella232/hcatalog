@@ -57,6 +57,10 @@
     <property name="package.buildroot" value="${build.dir}/rpm/hcatalog_package_build_${user.name}"/>
     <property name="package.build.dir" value="${build.dir}/rpm/hcatalog_package_build_${user.name}/BUILD"/>
 
+    <!-- Javac properties -->
+    <property name="sourceJavaVersion" value="1.6"/>
+    <property name="targetJavaVersion" value="1.6"/>
+
     <target name="init" depends="jvm-check">
         <mkdir dir="${dist.dir}"/>
     </target>
@@ -85,21 +89,33 @@
     <target name="jar" depends="init" description="build all jars">
         <ant target="jar" dir="core" inheritAll="false">
           <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
         </ant>
         <ant target="jar" dir="hcatalog-pig-adapter" inheritAll="false">
           <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
         </ant>
         <ant target="jar" dir="server-extensions" inheritAll="false">
           <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
         </ant>
         <ant target="jar" dir="webhcat/svr" inheritAll="false">
           <property name="_mvn.hadoop.profile" value="hadoop20"/>
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
         </ant>
         <ant target="jar" dir="webhcat/java-client" inheritAll="false">
           <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
         </ant>
         <ant target="jar" dir="storage-handlers/hbase" inheritAll="false">
           <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
         </ant>
     </target>
 
@@ -110,12 +126,30 @@
     -->
 
     <target name="test" depends="jar" description="run unit tests">
-        <ant target="test" dir="core" inheritAll="false"/>
-        <ant target="test" dir="hcatalog-pig-adapter" inheritAll="false"/>
-        <ant target="test" dir="server-extensions" inheritAll="false"/>
-        <ant target="test" dir="webhcat/svr" inheritAll="false"/>
-        <ant target="test" dir="webhcat/java-client" inheritAll="false"/>
-        <ant target="test" dir="storage-handlers/hbase" inheritAll="false"/>
+        <ant target="test" dir="core" inheritAll="false">
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
+        </ant>
+        <ant target="test" dir="hcatalog-pig-adapter" inheritAll="false">
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
+        </ant>
+        <ant target="test" dir="server-extensions" inheritAll="false">
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
+        </ant>
+        <ant target="test" dir="webhcat/svr" inheritAll="false">
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
+        </ant>
+        <ant target="test" dir="webhcat/java-client" inheritAll="false">
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
+        </ant>
+        <ant target="test" dir="storage-handlers/hbase" inheritAll="false">
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
+        </ant>
         <!-- One checkstyle run for the whole repo. Runs after junit tests
         to piggyback on resolved jars. -->
         <path id="checkstyle.class.path">

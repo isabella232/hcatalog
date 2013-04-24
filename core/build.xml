@@ -59,10 +59,14 @@
   <target name="compile">
     <echo message="${ant.project.name}"/>
     <_javac srcDir="${basedir}/src/main/java"
+            source="${sourceJavaVersion}"
+            target="${targetJavaVersion}"
             destDir="${build.classes}"
             classPathRef="compile.class.path"/>
     <ant target="jar" dir="${path.to.basedir}/shims" inheritAll="false">
         <property name="_mvn.hadoop.profile" value="${mvn.hadoop.profile}"/>
+          <property name="sourceJavaVersion" value="${sourceJavaVersion}"/>
+          <property name="targetJavaVersion" value="${targetJavaVersion}"/>
     </ant>
   </target>
 
