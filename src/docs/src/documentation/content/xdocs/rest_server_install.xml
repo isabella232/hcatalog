@@ -121,7 +121,7 @@ Server: Jetty(7.6.0.v20120127)
    <a href="http://www.apache.org/dyn/closer.cgi/hive/">Download</a>
    the hive tar.gz file and place it in HDFS. 
 <source>
-hadoop fs -put /tmp/hive-0.10.0-cdh4.2.1.tar.gz /apps/templeton/hive-0.10.0-cdh4.2.1.tar.gz
+hadoop fs -put /tmp/hive-0.10.0-cdh4.2.2.tar.gz /apps/templeton/hive-0.10.0-cdh4.2.2.tar.gz
 </source>
   </li>
 
@@ -129,7 +129,7 @@ hadoop fs -put /tmp/hive-0.10.0-cdh4.2.1.tar.gz /apps/templeton/hive-0.10.0-cdh4
    <a href="http://www.apache.org/dyn/closer.cgi/pig">Download</a>
    the Pig tar.gz file and place it into HDFS.  For example:
 <source>
-hadoop fs -put /tmp/pig-0.10.0-cdh4.2.1.tar.gz /apps/templeton/pig-0.10.0-cdh4.2.1.tar.gz
+hadoop fs -put /tmp/pig-0.10.0-cdh4.2.2.tar.gz /apps/templeton/pig-0.10.0-cdh4.2.2.tar.gz
 </source>
   </li>
 
@@ -165,25 +165,25 @@ hadoop fs -put ugi.jar /apps/templeton/ugi.jar
 
   <tr>
     <td><strong>templeton.pig.archive</strong></td>
-    <td><code>hdfs:///apps/templeton/pig-0.10.0-cdh4.2.1.tar.gz</code></td>
+    <td><code>hdfs:///apps/templeton/pig-0.10.0-cdh4.2.2.tar.gz</code></td>
     <td>The path to the Pig archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.pig.path</strong></td>
-    <td><code>pig-0.10.0-cdh4.2.1.tar.gz/pig-0.10.0-cdh4.2.1/bin/pig</code></td>
+    <td><code>pig-0.10.0-cdh4.2.2.tar.gz/pig-0.10.0-cdh4.2.2/bin/pig</code></td>
     <td>The path to the Pig executable.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.hive.archive</strong></td>
-    <td><code>hdfs:///apps/templeton/hive-0.10.0-cdh4.2.1.tar.gz</code></td>
+    <td><code>hdfs:///apps/templeton/hive-0.10.0-cdh4.2.2.tar.gz</code></td>
     <td>The path to the Hive archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.hive.path</strong></td>
-    <td><code>hive-0.10.0-cdh4.2.1.tar.gz/hive-0.10.0-cdh4.2.1/bin/hive</code></td>
+    <td><code>hive-0.10.0-cdh4.2.2.tar.gz/hive-0.10.0-cdh4.2.2/bin/hive</code></td>
     <td>The path to the Hive executable.</td>
   </tr>
 
