@@ -124,13 +124,13 @@ ${env.PIG_HOME}/bin/pig
 
   <tr>
     <td><strong>templeton.pig.archive</strong></td>
-    <td><code>hdfs:///user/templeton/pig-0.10.0-cdh4.3.1.tar.gz</code></td>
+    <td><code>hdfs:///user/templeton/pig-0.10.0-cdh4.3.2.tar.gz</code></td>
     <td>The path to the Pig archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.pig.path</strong></td>
-    <td><code>pig-0.10.0-cdh4.3.1.tar.gz/pig-0.10.0-cdh4.3.1/bin/pig</code></td>
+    <td><code>pig-0.10.0-cdh4.3.2.tar.gz/pig-0.10.0-cdh4.3.2/bin/pig</code></td>
     <td>The path to the Pig executable.</td>
   </tr>
 
@@ -142,13 +142,13 @@ ${env.PIG_HOME}/bin/pig
 
  <tr>
     <td><strong>templeton.hive.archive</strong></td>
-    <td><code>hdfs:///user/templeton/hive-0.10.0-cdh4.3.1.tar.gz</code></td>
+    <td><code>hdfs:///user/templeton/hive-0.10.0-cdh4.3.2.tar.gz</code></td>
     <td>The path to the Hive archive.</td>
   </tr>
 
   <tr>
     <td><strong>templeton.hive.path</strong></td>
-    <td><code>hive-0.10.0-cdh4.3.1.tar.gz/hive-0.10.0-cdh4.3.1/bin/hive</code></td>
+    <td><code>hive-0.10.0-cdh4.3.2.tar.gz/hive-0.10.0-cdh4.3.2/bin/hive</code></td>
     <td>The path to the Hive executable.</td>
   </tr>
 
