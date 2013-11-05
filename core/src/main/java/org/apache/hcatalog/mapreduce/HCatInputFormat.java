@@ -51,8 +51,7 @@ public class HCatInputFormat extends HCatBaseInputFormat {
      */
     @Deprecated
     public static void setInput(Configuration conf, InputJobInfo inputJobInfo) throws IOException {
-        setInput(conf, inputJobInfo.getDatabaseName(), inputJobInfo.getTableName())
-            .setFilter(inputJobInfo.getFilter())
+        setInput(conf, inputJobInfo.getDatabaseName(), inputJobInfo.getTableName(), inputJobInfo.getFilter())
             .setProperties(inputJobInfo.getProperties());
     }
 
@@ -64,14 +63,30 @@ public class HCatInputFormat extends HCatBaseInputFormat {
     }
 
     /**
+     * See {@link #setInput(org.apache.hadoop.conf.Configuration, String, String)}
+     */
+    public static HCatInputFormat setInput(Job job, String dbName, String tableName, String filter) throws IOException {
+        return setInput(job.getConfiguration(), dbName, tableName, filter);
+    }
+
+    /**
+     * See {@link #setInput(org.apache.hadoop.conf.Configuration, String, String)}
+     */
+    public static HCatInputFormat setInput(Configuration conf, String dbName, String tableName)
+        throws IOException {
+        return setInput(conf, dbName, tableName, null);
+    }
+
+    /**
      * Set inputs to use for the job. This queries the metastore with the given input
      * specification and serializes matching partitions into the job conf for use by MR tasks.
      * @param conf the job configuration
      * @param dbName database name, which if null 'default' is used
      * @param tableName table name
+     * @param filter the partition filter to use, can be null for no filter
      * @throws IOException on all errors
      */
-    public static HCatInputFormat setInput(Configuration conf, String dbName, String tableName)
+    public static HCatInputFormat setInput(Configuration conf, String dbName, String tableName, String filter)
         throws IOException {
 
         Preconditions.checkNotNull(conf, "required argument 'conf' is null");
@@ -79,7 +94,7 @@ public class HCatInputFormat extends HCatBaseInputFormat {
 
         HCatInputFormat hCatInputFormat = new HCatInputFormat();
         hCatInputFormat.conf = conf;
-        hCatInputFormat.inputJobInfo = InputJobInfo.create(dbName, tableName, null, null);
+        hCatInputFormat.inputJobInfo = InputJobInfo.create(dbName, tableName, filter, null);
 
         try {
             InitializeInput.setInput(conf, hCatInputFormat.inputJobInfo);
@@ -91,11 +106,10 @@ public class HCatInputFormat extends HCatBaseInputFormat {
     }
 
     /**
-     * Set a filter on the input table.
-     * @param filter the filter specification, which may be null
-     * @return this
-     * @throws IOException on all errors
+     * Use {@link #setInput(org.apache.hadoop.conf.Configuration, String, String, String)} instead,
+     * to specify a partition filter to directly initialize the input with.
      */
+    @Deprecated
     public HCatInputFormat setFilter(String filter) throws IOException {
         // null filters are supported to simplify client code
         if (filter != null) {
